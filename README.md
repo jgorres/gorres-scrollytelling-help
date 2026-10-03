@@ -18,7 +18,9 @@ https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.co
 | `content.json` | Pages, templates, navigation and media records of the help site |
 | `uploads.zip` | Media files: photos, screenshots, banners and a short test video |
 | `import.php` | Import script, run by WP-CLI inside the Playground |
-| `export.php`, `build.sh` | Tools that create the bundle from the local help site; not used by the Playground |
+
+`content.json`, `uploads.zip` and the plugin ZIP are generated from a local
+copy of the help site; the export tools live in the plugin repository.
 
 ## Running it locally
 
