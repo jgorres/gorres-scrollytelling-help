@@ -1,0 +1,155 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"meta": {
+		"title": "Gorres Scrollytelling Help",
+		"author": "Jörn Gorres",
+		"description": "Online help for the Gorres Scrollytelling plugin in English and German, with live examples of the blocks."
+	},
+	"landingPage": "/",
+	"preferredVersions": {
+		"php": "8.4",
+		"wp": "latest"
+	},
+	"features": {
+		"networking": true
+	},
+	"steps": [
+		{
+			"step": "login"
+		},
+		{
+			"step": "installTheme",
+			"themeData": {
+				"resource": "wordpress.org/themes",
+				"slug": "twentytwentyfive"
+			},
+			"options": {
+				"activate": true
+			},
+			"ifAlreadyInstalled": "skip"
+		},
+		{
+			"step": "installTheme",
+			"themeData": {
+				"resource": "wordpress.org/themes",
+				"slug": "generatepress"
+			},
+			"options": {
+				"activate": false
+			},
+			"ifAlreadyInstalled": "skip"
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "plugin-check"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "simple-page-ordering"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "polylang"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "bundled",
+				"path": "/gorres-scrollytelling.zip"
+			},
+			"options": {
+				"activate": true,
+				"targetFolderName": "gorres-scrollytelling"
+			}
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php\nrequire '/wordpress/wp-load.php';\nrequire_once ABSPATH . 'wp-admin/includes/plugin.php';\nrequire_once ABSPATH . 'wp-admin/includes/file.php';\n$jgor_st_help_bundled = array_intersect( array( 'akismet/akismet.php', 'hello.php' ), array_keys( get_plugins() ) );\nif ( $jgor_st_help_bundled ) {\n\tdelete_plugins( array_values( $jgor_st_help_bundled ) );\n}\n"
+		},
+		{
+			"step": "updateUserMeta",
+			"userId": 1,
+			"meta": {
+				"show_admin_bar_front": "false",
+				"wp_persisted_preferences": {
+					"core/edit-post": {
+						"welcomeGuide": false
+					},
+					"core/edit-site": {
+						"welcomeGuide": false,
+						"welcomeGuidePage": false,
+						"welcomeGuideStyles": false,
+						"welcomeGuideTemplate": false
+					},
+					"_modified": "2026-10-01T00:00:00.000Z"
+				}
+			}
+		},
+		{
+			"step": "unzip",
+			"zipFile": {
+				"resource": "bundled",
+				"path": "/uploads.zip"
+			},
+			"extractToPath": "/wordpress/wp-content/uploads"
+		},
+		{
+			"step": "mkdir",
+			"path": "/wordpress/wp-content/jgor-st-help"
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/jgor-st-help/import.php",
+			"data": {
+				"resource": "bundled",
+				"path": "/import.php"
+			}
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/jgor-st-help/content.json",
+			"data": {
+				"resource": "bundled",
+				"path": "/content.json"
+			}
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp eval-file /wordpress/wp-content/jgor-st-help/import.php /wordpress/wp-content/jgor-st-help/content.json confirm-wipe"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp rewrite flush"
+		},
+		{
+			"step": "rm",
+			"path": "/wordpress/wp-content/jgor-st-help/import.php"
+		},
+		{
+			"step": "rm",
+			"path": "/wordpress/wp-content/jgor-st-help/content.json"
+		},
+		{
+			"step": "rmdir",
+			"path": "/wordpress/wp-content/jgor-st-help"
+		}
+	]
+}
